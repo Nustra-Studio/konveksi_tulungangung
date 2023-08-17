@@ -13,11 +13,11 @@ License: For each use you must have a valid license purchased only from above li
   <meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <meta name="description" content="Responsive Laravel Admin Dashboard Template based on Bootstrap 5">
-	<meta name="author" content="NobleUI">
-	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, laravel, theme, front-end, ui kit, web">
+  <meta name="description" content="Manager App Konveksi By Nustra Studio">
+	<meta name="author" content="Nustra Studio">
+	<meta name="keywords" content="Konveksi app ">
 
-  <title>NobleUI - Laravel Admin Dashboard Template</title>
+  <title>Nustra Konveksi</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
