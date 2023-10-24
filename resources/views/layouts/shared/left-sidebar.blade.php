@@ -81,19 +81,19 @@
             </li>
             @endif
             <li class="side-nav-item">
-                <a href="{{ route("any", "") }}" class="side-nav-link">
+                <a href="{{ route() }}" class="side-nav-link">
                     <i class=" ri-p2p-fill"></i>
                     <span> Distribusi Kain Mitra </span>
                 </a>
             </li>
             <li class="side-nav-item">
-                <a href="{{ route("any", "") }}" class="side-nav-link">
+                <a href="{{ route() }}" class="side-nav-link">
                     <i class="  ri-gift-line"></i>
                     <span> Pengemasan </span>
                 </a>
             </li>
             <li class="side-nav-item">
-                <a href="{{ route("any", "") }}" class="side-nav-link">
+                <a href="{{ route() }}" class="side-nav-link">
                     <i class=" ri-box-3-line "></i>
                     <span> Rak</span>
                 </a>
