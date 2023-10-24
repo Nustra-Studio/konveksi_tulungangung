@@ -24,7 +24,7 @@ class ProduksiController extends Controller
         $produksi = Produksi::all();
         $mitras = Mitra::all();
         $barang = Barang::all();
-        return view('admin.produksi.create', compact('produksi', 'mitra', 'barang'));
+        return view('admin.produksi.create', compact('produksi', 'mitras', 'barang'));
     }
 
     public function store(Request $request)
