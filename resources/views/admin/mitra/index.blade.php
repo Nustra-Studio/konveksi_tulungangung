@@ -1,4 +1,6 @@
 @extends('layouts.vertical', ['title' => 'Mitra'])
+@include('layouts.notification')
+
 @section('css')
     @vite([
         'node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css',
@@ -11,8 +13,6 @@
     ])
 @endsection
 @section('content')
-
-    @include('layouts.shared/page-title', ['sub_title' => 'Daftar Supplier', 'page_title' => 'Supplier'])
 
     <div class="row mt-xl-3">
         <div class="col-12">
@@ -32,9 +32,9 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Nama Mitra</th>
+                                            <th>Alamat</th>
                                             <th>Nomor Telepon</th>
-                                            <th>Keterangan</th>
-                                            <th>Aksi</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -42,8 +42,8 @@
                                             <tr>
                                                 <td>{{ $mitra->id }}</td>
                                                 <td>{{ $mitra->nama }}</td>
+                                                <td>{{ $mitra->alamat }}</td>
                                                 <td>{{ $mitra->phone }}</td>
-                                                <td>{{ $mitra->keterangan }}</td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <a href="{{ route('mitra.edit', $mitra->id) }}" class="me-1">

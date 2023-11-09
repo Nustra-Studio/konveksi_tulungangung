@@ -11,7 +11,7 @@ class CreateProsesProduksiTable extends Migration
         Schema::create('proses_produksi', function (Blueprint $table) {
             $table->id();
             $table->string('product');
-            $table->integer('jumlah');
+            $table->string('jumlah');
             $table->date('mulai');
             $table->date('deadline');
             $table->string('status');

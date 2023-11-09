@@ -17,21 +17,19 @@
     $mitras = Mitra::all();
 @endphp
 @section('content')
-    <style>
-        .card-body th{
-            color: rgb(10, 10, 10);
-        }
-        .card-body td{
-            color: rgb(10, 10, 10);
-        }
-    </style>
+
 <div class="row mt-xl-3">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="header-title">Daftar Proses Produksi</h4>
-                <div class="button mt-2">
-                    <a href="{{ route('produksi.create') }}" class="btn btn-primary rounded-pill">Tambah Data</a>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="header-title">Daftar Proses Produksi</h4>
+                        <div class="button mt-2">
+                            <a href="{{ route('produksi.create') }}" class="btn btn-primary rounded-pill">Tambah Data</a>
+                        </div>
+                    </div>
+                    @include('layouts.notifications')
                 </div>
             </div>
             <div class="card-body">
@@ -48,25 +46,33 @@
                                         <th>Deadline</th>
                                         <th>Status</th>
                                         <th>Mitra</th>
-                                        <th>Aksi</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($produksi as $produksi)
+                                    @if ($produksi->status !== 'Selesai')
                                     <tr>
                                         <td>{{ $produksi->id }}</td>
-                                        <td>{{ $produksi->product }}</td>
+                                        <td>
+                                            @foreach($barang as $barangg)
+                                            @if($barangg->id == $produksi->product)
+                                                {{ $barangg->judul }}
+                                            @endif
+                                        @endforeach</td>
                                         <td>{{ $produksi->jumlah }}</td>
                                         <td>{{ $produksi->mulai }}</td>
                                         <td>{{ $produksi->deadline }}</td>
-                                        <td><?php
-                                            if ($produksi->status == 'Tersedia') {
-                                                echo '<span class="badge bg-info-subtle text-info">' . $produksi->status . '</span>';
-                                            } elseif ($produksi->status == 'Dibatalkan') {
-                                                echo '<span class="badge bg-pink-subtle text-pink">' . $produksi->status . '</span>';
-                                            }
-                                            ?>
-                                            </td>
+                                        <td>
+                                            @if ($produksi->status == 'Selesai')
+                                                <span class="badge bg-primary-subtle text-primary">Selesai</span>
+                                            @elseif ($produksi->status == 'Pending')
+                                                <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                            @elseif ($produksi->status == 'Dikirim')
+                                                <span class="badge bg-success-subtle text-success">Dikirim</span>
+                                            @endif
+                                        </td>
+
                                         <td>                    @foreach($mitras as $mitra)
                                             @if($mitra->id == $produksi->mitra)
                                                 {{ $mitra->nama }}
@@ -88,6 +94,7 @@
 
                                         </td>
                                     </tr>
+                                    @endif
                                     @endforeach
                                 </tbody>
                             </table>

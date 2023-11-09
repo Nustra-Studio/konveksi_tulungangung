@@ -11,16 +11,18 @@ return new class extends Migration
         Schema::create('barang', function (Blueprint $table) {
             $table->id();
             $table->string('uuid');
-            $table->integer('category_id');
-            $table->integer('supplier_id');
+            $table->string('category_id');
+            $table->string('supplier_id');
             $table->string('kode_barang');
-            $table->decimal('harga_jual',20, 2);
-            $table->decimal('harga_pokok', 20, 2);
-            $table->integer('stok');
+            $table->string('harga_jual',20);
+            $table->string('harga_pokok', 20);
+            $table->string('stok');
 
             $table->string('judul')->required();
 
             $table->string('status');
+            $table->string('keterangan');
+            $table->string('satuan');
             $table->timestamps();
         });
     }

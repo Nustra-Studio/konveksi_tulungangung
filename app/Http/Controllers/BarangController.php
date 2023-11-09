@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\Supplier;
 use App\Models\Category;
+use App\Models\Satuan;
 use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 
@@ -15,11 +16,9 @@ class BarangController extends Controller
     public function index()
     {
         $barangs = Barang::all();
-        $role = auth()->user()->role;
-        $base = "$role/barang";
         $suppliers = Supplier::all();
         $kategorys = Category::all();
-        return view('admin.barang.index', compact('barangs', 'role', 'base', 'suppliers', 'kategorys'));
+        return view('admin.barang.index', compact('barangs', 'suppliers', 'kategorys'));
 
     }
 
@@ -27,31 +26,32 @@ class BarangController extends Controller
     {
         $suppliers = Supplier::all();
         $kategorys = Category::all();
-        return view('admin.barang.create', compact('suppliers', 'kategorys'));
+        $satuan = Satuan::all();
+        return view('admin.barang.create', compact('suppliers', 'kategorys', 'satuan'));
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'category_id' => 'required|integer',
+            'supplier_id' => 'required|integer',
+            'kode_barang' => 'required|string',
+            'harga_jual' => 'required|numeric',
+            'harga_pokok' => 'required|numeric',
+            'stok' => 'required|integer',
+            'satuan' => 'required',
+            'judul' => 'required|string',
+            'status' => 'required|string',
+            'keterangan' => 'required|string',
+        ]);
 
-            $request->validate([
-                'category_id' => 'required|integer',
-                'supplier_id' => 'required|integer',
-                'kode_barang' => 'required|string',
-                'harga_jual' => 'required|numeric',
-                'harga_pokok' => 'required|numeric',
-                'stok' => 'required|integer',
-                'judul' => 'required|string',
-                'status' => 'required|string',
-            ]);
+        $uuid = Uuid::uuid4()->toString();
+        $requestData = $request->all();
+        $requestData['uuid'] = $uuid;
 
-            $uuid = Uuid::uuid4()->toString();
-            $requestData = $request->all();
-            $requestData['uuid'] = $uuid;
+        Barang::create($requestData);
 
-            Barang::create($requestData);
-
-            return redirect()->route('barang.index')->with('success', 'Barang berhasil disimpan.');
-
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil disimpan.');
     }
 
     public function show($id)
@@ -67,10 +67,13 @@ class BarangController extends Controller
         $barang = Barang::find($id);
         $suppliers = Supplier::all();
         $kategorys = Category::all();
-        return view('admin.barang.edit', compact('barang', 'suppliers', 'kategorys'));
+        $satuan = Satuan::all();
+        return view('admin.barang.edit', compact('barang', 'suppliers', 'kategorys', 'satuan'));
     }
 
-    public function update(Request $request, $id)
+
+
+    public function update(Request $request, Barang $barang)
     {
         $request->validate([
             'category_id' => 'required|integer',
@@ -79,15 +82,17 @@ class BarangController extends Controller
             'harga_jual' => 'required|numeric',
             'harga_pokok' => 'required|numeric',
             'stok' => 'required|integer',
+            'satuan' => 'required',
             'judul' => 'required|string',
             'status' => 'required|string',
+            'keterangan' => 'required|string',
         ]);
 
-        $barang = Barang::find($id);
-        $barang->update($request->except('_token'));
+        $barang->update($request->all());
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil diperbarui.');
     }
+
 
     public function destroy($id)
     {

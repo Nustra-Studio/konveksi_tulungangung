@@ -33,17 +33,17 @@ class ProduksiController extends Controller
             $request->validate([
                 'product' => 'required',
                 'jumlah' => 'required',
+                'mitra' => 'required',
+                'status' => 'required',
                 'mulai' => 'required',
                 'deadline' => 'required',
-                'status' => 'required',
-                'mitra' => 'required',
             ]);
 
             $requestData = $request->all();
 
             Produksi::create($requestData);
 
-            return redirect()->route('produksi.index')->with('success', 'Barang berhasil disimpan.');
+            return redirect()->route('produksi.index')->with('success', 'Berhasil menambahkan data produksi baru.');
 
     }
 
@@ -59,7 +59,8 @@ class ProduksiController extends Controller
     {
         $produksi = Produksi::find($id);
         $mitras = Mitra::all();
-        return view('admin.produksi.edit', compact('produksi', 'mitras'));
+        $barang = Barang::all();
+        return view('admin.produksi.edit', compact('produksi', 'mitras', 'barang'));
     }
 
     public function update(Request $request, $id)
@@ -76,7 +77,25 @@ class ProduksiController extends Controller
         $produksi = Produksi::find($id);
         $produksi->update($request->except('_token'));
 
-        return redirect()->route('produksi.index')->with('success', 'Barang berhasil diperbarui.');
+        if ($request->status == 'Selesai') {
+            $barangId = $request->product;
+
+            if ($barangId) {
+                $barang = Barang::find($barangId);
+
+                if ($barang) {
+                    $stokRequested = (int)$request->jumlah;
+                    $barang->stok -= $stokRequested;
+                    $barang->save();
+                } else {
+                    return redirect()->back()->with('error', 'Barang not found');
+                }
+            } else {
+                return redirect()->back()->with('error', 'Barang ID not provided in the request');
+            }
+        }
+
+        return redirect()->route('produksi.index')->with('success', 'Data Produksi berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -84,6 +103,6 @@ class ProduksiController extends Controller
         $produksi = Produksi::find($id);
         $produksi->delete();
 
-        return redirect()->route('produksi.index')->with('success', 'Barang berhasil dihapus.');
+        return redirect()->route('produksi.index')->with('success', 'Data Produksi berhasil dihapus.');
     }
 }

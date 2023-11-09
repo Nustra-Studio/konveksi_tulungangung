@@ -13,6 +13,16 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\MitraController;
 use App\Http\Controllers\ProduksiController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RakController;
+use App\Http\Controllers\IsiRakController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SatuanController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\ProduksiHistoryController;
+use App\Http\Controllers\DistribusiController;
+use App\Http\Controllers\Distribusi2Controller;
+use App\Http\Controllers\PengemasanController;
 
 
 
@@ -39,47 +49,37 @@ Route::group(['middleware'=>'auth'],function () {
         return redirect('/');
     });
 });
-Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
-    // Define your admin-related routes here
 
-    Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
-    Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
-    Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
-    Route::get('/barang/{id}', [BarangController::class, 'show'])->name('barang.show');
-    Route::get('/barang/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
-    Route::put('/barang/{id}', [BarangController::class, 'update'])->name('barang.update');
-    Route::delete('/barang/{id}', [BarangController::class, 'destroy'])->name('barang.destroy');
-    Route::get('/mitra', [MitraController::class, 'index'])->name('mitra.index');
-    Route::get('/mitra/create', [MitraController::class, 'create'])->name('mitra.create');
-    Route::post('/mitra', [MitraController::class, 'store'])->name('mitra.store');
-    Route::get('/mitra/{id}', [MitraController::class, 'show'])->name('mitra.show');
-    Route::get('/mitra/{id}/edit', [MitraController::class, 'edit'])->name('mitra.edit');
-    Route::put('/mitra/{id}', [MitraController::class, 'update'])->name('mitra.update');
-    Route::delete('/mitra/{id}', [MitraController::class, 'destroy'])->name('mitra.destroy');
-    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
-    Route::get('/supplier/create', [SupplierController::class, 'create'])->name('supplier.create');
-    Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
-    Route::get('/supplier/{id}', [SupplierController::class, 'show'])->name('supplier.show');
-    Route::get('/supplier/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
-    Route::put('/supplier/{id}', [SupplierController::class, 'update'])->name('supplier.update');
-    Route::delete('/supplier/{id}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
-    Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
-    Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
-    Route::post('/category', [CategoryController::class, 'store'])->name('category.store');
-    Route::get('/category/{id}', [CategoryController::class, 'show'])->name('category.show');
-    Route::get('/category/{id}/edit', [CategoryController::class, 'edit'])->name('category.edit');
-    Route::put('/category/{id}', [CategoryController::class, 'update'])->name('category.update');
-    Route::delete('/category/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
-    Route::get('/produksi', [ProduksiController::class, 'index'])->name('produksi.index');
-    Route::get('/produksi/create', [ProduksiController::class, 'create'])->name('produksi.create');
-    Route::post('/produksi', [ProduksiController::class, 'store'])->name('produksi.store');
-    Route::get('/produksi/{id}', [ProduksiController::class, 'show'])->name('produksi.show');
-    Route::get('/produksi/{id}/edit', [ProduksiController::class, 'edit'])->name('produksi.edit');
-    Route::put('/produksi/{id}', [ProduksiController::class, 'update'])->name('produksi.update');
-    Route::delete('/produksi/{id}', [ProduksiController::class, 'destroy'])->name('produksi.destroy');
+$sharedRoutes = function () {
+    Route::resource('barang', BarangController::class);
+    Route::resource('mitra', MitraController::class);
+    Route::resource('supplier', SupplierController::class);
+    Route::resource('category', CategoryController::class);
+    Route::resource('produksi', ProduksiController::class);
+    Route::resource('pengemasan', ProduksiController::class);
+    Route::resource('profile', ProfileController::class);
+    Route::resource('rak', RakController::class);
+    Route::resource('satuan', SatuanController::class);
+    Route::resource('isirak', IsiRakController::class);
+    Route::resource('history', HistoryController::class);
+    Route::resource('distribusi', DistribusiController::class);
+    Route::get('settings', [SettingsController::class, 'index'])->name('admin.settings.index');
+    Route::get('penjualan/create', [HistoryController::class, 'penjualan_create'])->name('admin.penjualan.create');
+    Route::get('settings', [SettingsController::class, 'edit'])->name('admin.settings.edit');
+    Route::put('settings', [SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::get('penjualan', [HistoryController::class, 'index'])->name('penjualan.index');
+    Route::get('pembelian', [HistoryController::class, 'index'])->name('pembelian.index');
+    Route::get('distribusihistory', [Distribusi2Controller::class, 'index'])->name('distribusishow.index');
+    Route::get('produksihistory', [ProduksiHistoryController::class, 'index'])->name('produksihistory.index');
+    Route::get('pengemasan/create', [PengemasanController::class, 'create'])->name('pengemasan.create');
+    Route::get('pengemasanhistory', [PengemasanController::class, 'index'])->name('pengemasan.index');
+};
 
-    // Define other admin routes here
-});
+Route::prefix('admin')->group($sharedRoutes);
+Route::prefix('superadmin')->group($sharedRoutes);
+
+//Route::get('/barang/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
+//Route::get('/mitra/{id}/edit', [MitraController::class, 'edit'])->name('mitra.edit');
 
 // Your other routes outside of the admin prefix
 
@@ -88,13 +88,3 @@ Route::get('/home', fn () => view('index'))->name('home');
 Route::get('{first}/{second}/{third}', [RoutingController::class, 'thirdLevel'])->name('third');
 Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
 Route::get('{any}', [RoutingController::class, 'root'])->name('any');
-// Route::resource('kontigen', KontigenController::class);
-// Route::resource('pesilat', PesilatController::class);
-// Route::resource('peserta', PesertaController::class);
-// Route::resource('event', EventController::class);
-
-// Route::middleware(['role:admin'])->group(function () {
-//     Route::resource('kelas', KelasController::class);
-//     Route::resource('juri', JuriController::class);
-// });
-

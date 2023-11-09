@@ -16,10 +16,14 @@ class Barang extends Model
         'harga_jual',
         'harga_pokok',
         'stok',
+        'satuan',
         'judul',
-        'status'
+        'status',
+        'keterangan'
     ];
 
+
+    public $timestamps = false;
 
     // Definisikan relasi ke tabel 'category' dan 'supplier' jika diperlukan
     public function category()
@@ -29,6 +33,6 @@ class Barang extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'id');
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 }

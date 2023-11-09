@@ -1,8 +1,6 @@
 @extends('layouts.vertical', ['title' => 'Daftar Supplier'])
-
+@include('layouts.notification')
 @section('content')
-    @include('layouts.shared/page-title', ['sub_title' => 'Daftar Supplier', 'page_title' => 'Supplier'])
-
     <div class="row mt-xl-3">
         <div class="col-12">
             <div class="card">
@@ -23,7 +21,7 @@
                                             <th>Nama Supplier</th>
                                             <th>Alamat</th>
                                             <th>Nomor Telepon</th>
-                                            <th>Aksi</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>

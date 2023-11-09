@@ -42,9 +42,10 @@
 
 
         </div>
-
+    @php
+        $role = auth()->user()->role;
+    @endphp
         <ul class="topbar-menu d-flex align-items-center gap-3">
-            
             <li class="dropdown">
                 <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="#" role="button"
                     aria-haspopup="false" aria-expanded="false">
@@ -58,33 +59,22 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
                     <!-- item-->
-                    <div class=" dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome !</h6>
-                    </div>
 
                     <!-- item-->
-                    <a href="pages-profile.html" class="dropdown-item">
+                    @if ($role == "superadmin")
+                    <a href="{{ route('second', ["$role", 'profile']) }}" class="dropdown-item">
                         <i class="ri-account-circle-line fs-18 align-middle me-1"></i>
-                        <span>My Account</span>
+                        <span>Kelola Administrator</span>
                     </a>
+                    @endif
 
                     <!-- item-->
-                    <a href="pages-profile.html" class="dropdown-item">
+                    <a href="{{ route('second', ["$role", 'settings']) }}" class="dropdown-item">
                         <i class="ri-settings-4-line fs-18 align-middle me-1"></i>
                         <span>Settings</span>
                     </a>
 
                     <!-- item-->
-                    <a href="pages-faq.html" class="dropdown-item">
-                        <i class="ri-customer-service-2-line fs-18 align-middle me-1"></i>
-                        <span>Support</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="auth-lock-screen.html" class="dropdown-item">
-                        <i class="ri-lock-password-line fs-18 align-middle me-1"></i>
-                        <span>Lock Screen</span>
-                    </a>
 
                     <!-- item-->
                     <form method="POST" action="{{url('/logout')}}">

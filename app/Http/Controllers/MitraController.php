@@ -16,7 +16,9 @@ class MitraController extends Controller
 
     public function create()
     {
-        return view('admin.mitra.create');
+        $mitra = Mitra::all();
+
+        return view('admin.mitra.create', compact('mitra'));
     }
 
     public function store(Request $request)
@@ -24,12 +26,12 @@ class MitraController extends Controller
         $request->validate([
             'nama' => 'required',
             'phone' => 'required',
-            'keterangan' => 'required',
+            'alamat' => 'required',
         ]);
 
         Mitra::create($request->all());
 
-        return redirect()->route('mitra.index')->with('success', 'Mitra created successfully.');
+        return redirect()->route('mitra.index')->with('success', 'Berhasil menambahkan Data Mitra Baru.');
     }
 
     public function show($id)
@@ -40,22 +42,26 @@ class MitraController extends Controller
 
     public function edit($id)
     {
+        // Find the mitra by id
         $mitra = Mitra::find($id);
-        return view('admin.mitra.edit', compact('mitra'));
+
+        // Pass the id and mitra variables to the view
+        return view('admin.mitra.edit', compact('id', 'mitra'));
     }
+
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'nama' => 'required',
             'phone' => 'required',
-            'keterangan' => 'required',
+            'alamat' => 'required',
         ]);
 
         $mitra = Mitra::find($id);
         $mitra->update($request->all());
 
-        return redirect()->route('mitra.index')->with('success', 'Mitra updated successfully.');
+        return redirect()->route('mitra.index')->with('success', 'Data Mitra berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -63,7 +69,7 @@ class MitraController extends Controller
         $mitra = Mitra::find($id);
         $mitra->delete();
 
-        return redirect()->route('mitra.index')->with('success', 'Mitra berhasil dihapus.');
+        return redirect()->route('mitra.index')->with('success', 'Data Mitra berhasil dihapus.');
     }
 
 }

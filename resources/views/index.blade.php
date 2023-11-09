@@ -1,5 +1,29 @@
 @extends('layouts.vertical', ['title' => 'Dashboard Konveksi', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@php
+use App\Models\Barang;
+use App\Models\Category;
+use App\Models\Mitra;
+use App\Models\Rak;
+use App\Models\Distribusi;
 
+
+$crkain = Category::where('product', 'Kain')->first();
+
+if ($crkain) {
+    $crkainId = $crkain->id;
+} else {
+    $crkainId = 0;
+}
+$jml = Barang::where('category_id', $crkain->id)->count(); // Retrieve the count of 'Barang' records
+
+$mitra = Mitra::count(); // Get the count of 'Mitra' records
+$distribusi = Distribusi::sum('kuantitas');
+
+
+$rak = Rak::count(); // Get the count of 'Rak' records
+$mitra = Mitra::all()->count();
+$rak = Rak::all()->count();
+@endphp
 @section('content')
 @include('layouts.shared/page-title', ['sub_title' => 'Menu', 'page_title' => 'Dashboard'])
 
@@ -8,10 +32,10 @@
             <div class="card widget-flat text-bg-pink">
                 <div class="card-body">
                     <div class="float-end">
-                        <i class=" ri-school-line widget-icon"></i>
+                        <i class=" ri-file-paper-2-line widget-icon"></i>
                     </div>
                     <h6 class="text-uppercase mt-0" title="Customers">Jumlah Kain </h6>
-                    <h2 class="my-2">15</h2>
+                    <h2 class="my-2">{{$jml}}</h2>
                     <p class="mb-0">
                         <span class="text-nowrap">Roll</span>
                     </p>
@@ -26,7 +50,7 @@
                         <i class=" ri-user-fill widget-icon"></i>
                     </div>
                     <h6 class="text-uppercase mt-0" title="Customers">Kain Yang Terdistribusi</h6>
-                    <h2 class="my-2">9,254</h2>
+                    <h2 class="my-2">{{ number_format($distribusi) }}</h2>
                     <p class="mb-0">
                         <span class="text-nowrap">Pcs</span>
                     </p>
@@ -41,7 +65,7 @@
                         <i class=" ri-user-3-line widget-icon"></i>
                     </div>
                     <h6 class="text-uppercase mt-0" title="Customers">Total Mitra/Penjahit</h6>
-                    <h2 class="my-2">23</h2>
+                    <h2 class="my-2">{{$mitra}}</h2>
                     <p class="mb-0">
                         <span class="text-nowrap">mitra</span>
                     </p>
@@ -53,12 +77,12 @@
             <div class="card widget-flat text-bg-primary">
                 <div class="card-body">
                     <div class="float-end">
-                        <i class=" ri-calendar-2-line widget-icon"></i>
+                        <i class=" ri-layout-row-line widget-icon"></i>
                     </div>
-                    <h6 class="text-uppercase mt-0" title="Customers">Jumlah Gudang</h6>
-                    <h2 class="my-2">63,154</h2>
+                    <h6 class="text-uppercase mt-0" title="Customers">Jumlah Rak</h6>
+                    <h2 class="my-2">{{$rak}}</h2>
                     <p class="mb-0">
-                        <span class="text-nowrap">pcs</span>
+                        <span class="text-nowrap"></span>
                     </p>
                 </div>
             </div>

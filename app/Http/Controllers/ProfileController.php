@@ -3,67 +3,89 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Profile  ;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Log;
 
-class SupplierController extends Controller
+class ProfileController extends Controller
 {
     public function index()
     {
-        $suppliers = Supplier::all();
-        return view('admin.supplier.index', compact('suppliers'));
+        $profiles = Profile::all();
+        return view('admin.profile.index', compact('profiles'));
     }
 
     public function create()
     {
-        return view('admin.supplier.create');
+        return view('admin.profile.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'supplier' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'role' => 'required'
         ]);
 
-        Supplier::create($request->all());
+        $data = $request->all();
 
-        return redirect()->route('supplier.index')->with('success', 'Supplier created successfully.');
+        // Hash the password
+        $data['password'] = Hash::make($data['password']);
+        $data['role'] = "admin";
+
+        Profile::create($data);
+
+        return redirect()->route('profile.index')->with('success', 'Profile created successfully.');
+
     }
+
 
     public function show($id)
     {
-        $supplier = Supplier::find($id);
-        return view('admin.supplier.show', compact('supplier'));
+        $profile = Profile::find($id);
+        return view('admin.profile.show', compact('profile'));
     }
 
     public function edit($id)
     {
-        $supplier = Supplier::find($id);
-        return view('admin.supplier.edit', compact('supplier'));
+        $profile = Profile::find($id);
+        return view('admin.profile.edit', compact('profile'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'supplier' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'role' => 'required', // Add validation for the "role" field
         ]);
 
-        $supplier = Supplier::find($id);
-        $supplier->update($request->all());
+        $profile = Profile::find($id);
+        $profile->name = $request->input('name');
+        $profile->email = $request->input('email');
+        $profile->role = $request->input('role');
 
-        return redirect()->route('supplier.index')->with('success', 'Supplier updated successfully.');
+        // Hash the password only if it's provided in the request
+        if ($request->has('password')) {
+            $hashedPassword = Hash::make($request->input('password'));
+            $profile->password = $hashedPassword;
+        }
+
+        $profile->save();
+
+        return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
     }
+
 
     public function destroy($id)
     {
-        $supplier = Supplier::find($id);
-        $supplier->delete();
+        $profile = Profile::find($id);
+        $profile->delete();
 
-        return redirect()->route('supplier.index')->with('success', 'Supplier berhasil dihapus.');
+        return redirect()->route('profile.index')->with('success', 'Profile berhasil dihapus.');
     }
 
 }

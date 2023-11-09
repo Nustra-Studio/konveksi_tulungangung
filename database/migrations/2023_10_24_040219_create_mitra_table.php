@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("nama");
             $table->string("phone");
-            $table->string("keterangan");
+            $table->string("alamat");
             $table->timestamps();
         });
     }

@@ -1,5 +1,4 @@
 @extends('layouts.vertical', ['title' => 'Daftar Barang', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
-
 @section('content')
 @section('css')
     @vite([
@@ -15,25 +14,27 @@
 @php
     use App\Models\Mitra;
     $mitras = Mitra::all();
+    use App\Models\Satuan;
+    $satuans = Satuan::all();
 @endphp
 @section('content')
-    <style>
-        .card-body th{
-            color: rgb(10, 10, 10);
-        }
-        .card-body td{
-            color: rgb(10, 10, 10);
-        }
-    </style>
 <div class="row mt-xl-3">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="header-title">Daftar Barang</h4>
-                <div class="button mt-2">
-                    <a href="{{ route('barang.create') }}" class="btn btn-primary rounded-pill">Tambah Data</a>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="header-title">Daftar Barang</h4>
+                        <div class="button mt-2">
+                            <a href="{{ route('barang.create') }}" class="btn btn-primary rounded-pill">Tambah Data</a>
+                        </div>
+                    </div>
+                    @include('layouts.notifications')
                 </div>
+
+
             </div>
+
             <div class="card-body">
                 <div class="responsive-table-plugin">
                     <div class="">
@@ -48,9 +49,10 @@
                                         <th>Kode Barang</th>
                                         <th>Harga Jual</th>
                                         <th>Harga Pokok</th>
-                                        <th>Stok</th>
+                                        <th>Stok/Satuan</th>
+                                        <th>Keterangan</th>
                                         <th>Status</th>
-                                        <th>Aksi</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -58,14 +60,16 @@
                                     <tr>
                                         <td>{{ $barang->id }}</td>
                                         <td>{{ $barang->judul }}</td>
-                                        <td>                                            @foreach($mitras as $mitra)
-                                            @if($mitra->id === $barang->category_id)
-                                                {{ $mitra->nama }}
+                                        <td>
+                                            @foreach($kategorys as $kategori)
+                                            @if($kategori->id == $barang->category_id)
+                                                {{ $kategori->product }}
                                             @endif
-                                        @endforeach</td>
+                                        @endforeach
+                                        </td>
                                         <td>
                                             @foreach($suppliers as $supplier)
-                                                @if($supplier->id === $barang->supplier_id)
+                                                @if($supplier->id == $barang->supplier_id)
                                                     {{ $supplier->supplier }}
                                                 @endif
                                             @endforeach
@@ -73,7 +77,13 @@
                                         <td>{{ $barang->kode_barang }}</td>
                                         <td>{{ 'Rp. ' . number_format($barang->harga_jual, 2, ',', '.'); }}</td>
                                         <td>{{ 'Rp. ' . number_format($barang->harga_pokok, 2, ',', '.'); }}</td>
-                                        <td>{{ $barang->stok }}</td>
+                                        <td>{{ $barang->stok }}
+                                        @foreach($satuans as $satuan)
+                                            @if($satuan->id == $barang->satuan)
+                                                {{ $satuan->nama }}
+                                            @endif
+                                        @endforeach</td>
+                                        <td>{{ $barang->keterangan }}</td>
                                         <td><?php
                                             if ($barang->status == 'Tersedia') {
                                                 echo '<span class="badge bg-info-subtle text-info">' . $barang->status . '</span>';
