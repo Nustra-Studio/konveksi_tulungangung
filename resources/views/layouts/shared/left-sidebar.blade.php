@@ -123,7 +123,7 @@
 
             </li>
             <li class="side-nav-item">
-                <a href="{{ route("any", "$role/konversi") }}" class="side-nav-link">
+                <a href="{{ route("any", "$role/konversi/create") }}" class="side-nav-link">
                     <i class=" ri-calculator-line "></i>
                     <span> Konversi</span>
                 </a>
@@ -133,6 +133,7 @@
                     <i class="ri-scissors-line"></i>
                     <span> Pemotongan</span>
                 </a>
+                @if ($role == "superadmin")
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#sidebarChartss" aria-expanded="false"
                         aria-controls="sidebarChartss" class="side-nav-link">
@@ -149,6 +150,9 @@
                                 <a href="{{ route('second', ["$role", 'pembelian']) }}">Pembelian</a>
                             </li>
                             <li>
+                                <a href="{{ route('second', ["$role", 'pemotongan']) }}">Pemotongan</a>
+                            </li>
+                            <li>
                                 <a href="{{ route('second', ["$role", 'pengemasanhistory']) }}">Pengemasan</a>
                             </li>
                             <li>
@@ -161,6 +165,8 @@
                         </ul>
                     </div>
                 </li>
+                @endif
+
             </li>
             {{-- <li class="side-nav-item">
                 <a href="{{ route("any", "$role/peserta") }}" class="side-nav-link">

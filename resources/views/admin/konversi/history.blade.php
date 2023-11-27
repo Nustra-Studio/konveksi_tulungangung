@@ -12,10 +12,6 @@
         'node_modules/admin-resources/rwd-table/rwd-table.min.css',
     ])
 @endsection
-@php
-use App\Models\User;
-    $user = User::all();
-@endphp
 @section('content')
 
     <div class="row mt-xl-3">
@@ -34,7 +30,6 @@ use App\Models\User;
                                         <th>Nama Barang</th>
                                         <th>Kode Barang</th>
                                         <th>Kuantitas</th>
-                                        <th>Created By</th>
                                         <th>Ket. Waktu</th>
                                     </tr>
                                 </thead>
@@ -49,12 +44,6 @@ use App\Models\User;
                                                 @endif
                                                 @endforeach</td>                                            <td>{{ $distribusi->kode_barang }}</td>
                                             <td>{{ $distribusi->kuantitas }}</td>
-                                            <td>
-                                                @foreach($user as $users)
-                                                @if($users->id == $distribusi->created_by)
-                                                    {{ $users->name }}
-                                                @endif
-                                            @endforeach</td>
                                             <td class="date-cell">
                                                 {{ $distribusi->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d / H:i:s') }}
                                             </td>                                        </tr>

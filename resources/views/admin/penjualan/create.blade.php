@@ -71,6 +71,13 @@
                             <tbody>
                                 <!-- Data rows will be added here dynamically -->
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" style="text-align: right;"><strong>Total Harga:</strong></td>
+                                    <td id="total-harga">0</td>
+                                </tr>
+                            </tfoot>
+
                         </table>
                     </div>
                     <div class="col-lg-12">
@@ -85,6 +92,7 @@
     </div>
 </div>
 @endsection
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     .logo-lg {
@@ -129,9 +137,7 @@ function filterAndDisplayData() {
             supplierInput.val(supplierName);
         });
 
-        getSatuanName(selectedItem.satuan).then(function(satuanName) {
-            $('#stok').text(selectedItem.stok + " " + satuanName);
-        });
+        getSatuanName(selectedItem.satuan, selectedItem);
 
         satuan.val(harga);
         kode_produk.val(selectedItem.kode_barang);
@@ -141,6 +147,18 @@ function filterAndDisplayData() {
         }
     }
 }
+
+function updateTotalHarga() {
+    var total = 0;
+    $('#temporary-table tbody tr').each(function() {
+        var hargaTotal = parseInt($(this).find('td:nth-child(7)').text()) || 0;
+        total += hargaTotal;
+    });
+    var formattedTotal = 'Rp. ' + total.toLocaleString('id-ID');
+    $('#total-harga').text(formattedTotal);
+}
+
+
 
 function getCategoryName(categoryId) {
     return new Promise(function(resolve, reject) {
@@ -158,14 +176,15 @@ function getCategoryName(categoryId) {
     });
 }
 
-function getSatuanName(satuanId) {
+function getSatuanName(satuanId, selectedItem) {
     return new Promise(function(resolve, reject) {
         $.ajax({
             url: '/api/satuan/' + satuanId,
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                console.log(data); // Add this line for debugging
+                console.log(data); // Log the data to see what's returned
+                $('#stok').text(selectedItem.stok + " " + data.nama);
                 resolve(data.nama);
             },
             error: function(error) {
@@ -174,6 +193,7 @@ function getSatuanName(satuanId) {
         });
     });
 }
+
 
 function getSupplierName(supplierId) {
     return new Promise(function(resolve, reject) {
@@ -203,6 +223,7 @@ function generateRandomString() {
 }
 
 $(document).ready(function() {
+    console.log({{auth()->user()->id}})
     // Event handler for the "Kirim Data" button and Shift+Enter
     $('body').on('keydown', function(event) {
         if (event.key === 'Enter' && event.shiftKey) {
@@ -213,6 +234,9 @@ $(document).ready(function() {
 
     $('#hapusisitabel').on('click', function(event) {
     $('#temporary-table tbody').empty();
+    updateTotalHarga();
+
+
 })
 
     $('#judulSelector').select2();
@@ -268,6 +292,8 @@ $(document).ready(function() {
                 // Clear input fields and the selected "Judul"
                 inputFields.val('');
                 $('#selectedJudul').text('');
+                updateTotalHarga();
+
             });
 
             // Event handler for the "Kirim Data" button
@@ -288,6 +314,7 @@ $('#kirimDataButton').on('click', function(event) {
 
 // Function to send data to the server
 function sendPenjualanDataToServer(data) {
+    var kode_transaksi = generateRandomString();
     var modifiedData = data.map(function(row) {
         return {
             kode_barang: row[4], // Kode Produk
@@ -297,9 +324,25 @@ function sendPenjualanDataToServer(data) {
             harga_jual: row[6], // Harga Total
             stok: row[1], // Jumlah
             status: "jual",
-            kode_transaksi: generateRandomString(), // Random string generation
+            created_by: {{ auth()->user()->id }},
+            kode_transaksi: kode_transaksi, // Random string generation
             keterangan: "penjualan"
         };
+    });
+
+
+    Swal.fire({
+        title: 'Transaksi Penjualan Berhasil',
+        text: 'Unduh Bukti Transaksi?',
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Tidak'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect to the new page with the transaction ID
+            window.location.href = '/admin/cetakpdf/' + kode_transaksi + '?title=Nota Pembelian';
+        }
     });
 
     // Loop through the modified data and send each array separately

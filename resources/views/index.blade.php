@@ -7,15 +7,20 @@ use App\Models\Rak;
 use App\Models\Distribusi;
 
 
+$brall = Barang::all();
 $crkain = Category::where('product', 'Kain')->first();
 
 if ($crkain) {
-    $crkainId = $crkain->id;
+    $crkainId = $crkain ? $crkain->id : 0;
 } else {
     $crkainId = 0;
 }
-$jml = Barang::where('category_id', $crkain->id)->count(); // Retrieve the count of 'Barang' records
 
+if ($brall) {
+    $jml = $crkain ? Barang::where('category_id', $crkain->id)->count() : 0;
+} else {
+    $jml = 0;
+};
 $mitra = Mitra::count(); // Get the count of 'Mitra' records
 $distribusi = Distribusi::sum('kuantitas');
 
@@ -23,6 +28,14 @@ $distribusi = Distribusi::sum('kuantitas');
 $rak = Rak::count(); // Get the count of 'Rak' records
 $mitra = Mitra::all()->count();
 $rak = Rak::all()->count();
+
+
+    use App\Models\Produksi;
+    $produksi = Produksi::orderBy('created_at', 'desc')->take(10)->get();
+
+        $mitras = Mitra::all();
+        $barang = Barang::all();
+
 @endphp
 @section('content')
 @include('layouts.shared/page-title', ['sub_title' => 'Menu', 'page_title' => 'Dashboard'])
@@ -119,42 +132,35 @@ $rak = Rak::all()->count();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Kaos singlet</td>
-                                        <td>250</td>
-                                        <td>09/09/2023</td>
-                                        <td>26/12/2023</td>
-                                        <td><span class="badge bg-info-subtle text-info">Released</span></td>
-                                        <td>Nustra Group</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Hijab Motif</td>
-                                        <td>523</td>
-                                        <td>09/09/2023</td>
-                                        <td>26/12/2023</td>
-                                        <td><span class="badge bg-info-subtle text-info">Released</span></td>
-                                        <td>Kediri App Group</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Ciput</td>
-                                        <td>563</td>
-                                        <td>09/05/2023</td>
-                                        <td>10/05/2023</td>
-                                        <td><span class="badge bg-pink-subtle text-pink">Pending</span></td>
-                                        <td>Kediri App Group</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td>Celana Dalam</td>
-                                        <td>365</td>
-                                        <td>09/09/2023</td>
-                                        <td>31/12/2023</td>
-                                        <td><span class="badge bg-purple-subtle text-purple">Work in Progress</span></td>
-                                        <td>Nustra Group</td>
-                                    </tr>
+                                    @foreach($produksi as $produksi)
+                                    @if ($produksi->status !== 'Selesai')
+                                        <tr>
+                                            <td>{{ $produksi->id }}</td>
+                                            <td>@foreach($barang as $barangg)
+                                                @if($barangg->id == $produksi->product)
+                                                    {{ $barangg->judul }}
+                                                @endif
+                                            @endforeach</td>
+                                            <td>{{ $produksi->jumlah }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($produksi->mulai)->format('d/m/Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($produksi->deadline)->format('d/m/Y') }}</td>
+                                            <td>
+                                                @if ($produksi->status == 'Selesai')
+                                                    <span class="badge bg-primary-subtle text-primary">Selesai</span>
+                                                @elseif ($produksi->status == 'Pending')
+                                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                                @elseif ($produksi->status == 'Dikirim')
+                                                    <span class="badge bg-success-subtle text-success">Dikirim</span>
+                                                @endif
+                                            </td>
+                                            <td>@foreach($mitras as $mitra)
+                                                @if($mitra->id == $produksi->mitra)
+                                                    {{ $mitra->nama }}
+                                                @endif
+                                            @endforeach</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
 
                                 </tbody>
                             </table>
